@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Java Class Factory Animation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg-dark: #0f172a;
+        --panel-bg: #1e293b;
+        --accent: #38bdf8;
+        --accent-glow: rgba(56, 189, 248, 0.4);
+        --code-text: #e2e8f0;
+        --keyword: #c084fc;
+        --string: #4ade80;
+        --type: #facc15;
+        --object-bg: #334155;
+        --danger: #ef4444;
+        --success: #22c55e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #020617;
+        color: white;
+        font-family: "Inter", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      h1 {
+        background: linear-gradient(to right, #38bdf8, #a855f7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 10px;
+        font-weight: 800;
+      }
+
+      .subtitle {
+        color: #94a3b8;
+        margin-bottom: 30px;
+      }
+
+      /* MAIN LAYOUT */
+      .factory-container {
+        display: grid;
+        grid-template-columns: 400px 1fr 400px;
+        gap: 30px;
+        width: 100%;
+        max-width: 1500px;
+        align-items: start;
+      }
+
+      /* PANELS */
+      .panel {
+        background: var(--panel-bg);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid #334155;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        position: relative;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .panel-header {
+        font-family: "JetBrains Mono", monospace;
+        color: var(--accent);
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 15px;
+      }
+
+      /* BLUEPRINT STYLES */
+      .blueprint-content {
+        font-family: "JetBrains Mono", monospace;
+        color: #94a3b8;
+        line-height: 1.5;
+        font-size: 0.85rem;
+        background: #0f172a;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px dashed var(--accent);
+        flex-grow: 1;
+        overflow-y: auto;
+        max-height: 400px;
+      }
+
+      .hl-key {
+        color: var(--keyword);
+      }
+      .hl-type {
+        color: var(--accent);
+      }
+      .hl-var {
+        color: var(--type);
+      }
+      .hl-str {
+        color: var(--string);
+      }
+      .hl-comment {
+        color: #64748b;
+        font-style: italic;
+      }
+
+      /* DESIGNER CONTROLS (Left Panel Bottom) */
+      .designer-controls {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #334155;
+      }
+
+      .add-field-row {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 40px;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .mini-btn {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mini-btn:hover {
+        filter: brightness(1.1);
+      }
+
+      /* MIDDLE PANEL (JVM) */
+      .controls {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 600px;
+        padding: 0 20px;
+      }
+
+      .constructor-area {
+        width: 100%;
+        background: #0f172a;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #475569;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+        width: 100%;
+      }
+
+      label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        color: #cbd5e1;
+        font-size: 0.85rem;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      .type-badge {
+        font-size: 0.7rem;
+        color: var(--keyword);
+        background: rgba(192, 132, 252, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #475569;
+        background: #1e293b;
+        color: white;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: var(--accent);
+      }
+
+      .btn-construct {
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 0 20px var(--accent-glow);
+        transition: transform 0.1s, box-shadow 0.2s;
+        font-family: "JetBrains Mono", monospace;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .btn-construct:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 30px var(--accent-glow);
+      }
+
+      .btn-construct:active {
+        transform: translateY(1px);
+      }
+
+      /* MEMORY HEAP (RIGHT) */
+      .heap-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Stack them for better detail visibility */
+        gap: 15px;
+        overflow-y: auto;
+        max-height: 520px;
+        padding-right: 5px;
+      }
+
+      .object-card {
+        background: var(--object-bg);
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border: 1px solid #475569;
+        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+      }
+
+      @keyframes popIn {
+        0% {
+          transform: scale(0.8);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .card-icon {
+        font-size: 2.5rem;
+        width: 60px;
+        text-align: center;
+        color: var(--accent);
+      }
+
+      .card-details {
+        flex-grow: 1;
+        text-align: left;
+      }
+
+      .mem-address {
+        font-size: 0.7rem;
+        color: #64748b;
+        font-family: monospace;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      .field-row {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.8rem;
+        color: #cbd5e1;
+        margin-bottom: 2px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .field-name {
+        color: #94a3b8;
+      }
+      .field-val {
+        color: var(--string);
+        font-weight: bold;
+      }
+
+      /* ANIMATION BEAM */
+      .construction-beam {
+        position: fixed;
+        pointer-events: none;
+        z-index: 100;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 0 20px 5px white, 0 0 40px 10px var(--accent);
+        display: none;
+        mix-blend-mode: screen;
+      }
+
+      .explanation-box {
+        margin-top: 30px;
+        background: rgba(30, 41, 59, 0.5);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+        max-width: 1200px;
+        width: 100%;
+        line-height: 1.6;
+        color: #cbd5e1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      /* Dropdown styling for Class Selector */
+      .class-select {
+        background: #0f172a;
+        border: 1px solid var(--accent);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-family: "Inter", sans-serif;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Java Class Designer & Factory</h1>
+    <p class="subtitle">
+      Design the Class (Left) &rarr; Build the Object (Middle) &rarr; Store in
+      Memory (Right)
+    </p>
+
+    <div class="factory-container">
+      <!-- LEFT: THE CLASS (BLUEPRINT) -->
+      <div class="panel" id="blueprint-panel">
+        <div class="panel-header">
+          <span><i class="fa-solid fa-file-code"></i> Blueprint</span>
+          <select
+            id="classSelector"
+            class="class-select"
+            onchange="switchClass()"
+          >
+            <option value="Robot">Robot</option>
+            <option value="Car">Car</option>
+            <option value="Cat">Cat</option>
+            <option value="Planet">Planet</option>
+          </select>
+        </div>
+
+        <div id="codeDisplay" class="blueprint-content">
+          <!-- Code injected by JS -->
+        </div>
+
+        <div class="designer-controls">
+          <label style="color: var(--accent)">
+            <i class="fa-solid fa-pen-ruler"></i> Design: Add New Field</label
+          >
+          <div class="add-field-row">
+            <input
+              type="text"
+              id="newFieldName"
+              placeholder="Field Name (e.g. speed)"
+            />
+            <select id="newFieldType">
+              <option value="String">String</option>
+              <option value="int">int</option>
+              <option value="boolean">boolean</option>
+            </select>
+            <button class="mini-btn" onclick="addField()" title="Add Field">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDDLE: CONTROLS (JVM) -->
+      <div class="controls">
+        <div style="margin-bottom: 20px; text-align: center">
+          <h3 style="margin: 0; color: var(--accent)">Constructor Call</h3>
+          <span style="color: #64748b; font-size: 0.9rem"
+            >Fill in the arguments</span
+          >
+        </div>
+
+        <div class="constructor-area">
+          <div id="dynamicInputs">
+            <!-- Inputs injected by JS -->
+          </div>
+
+          <button class="btn-construct" onclick="createObject()">
+            <i class="fa-solid fa-cube"></i>
+            <span id="btnText">new Robot();</span>
+          </button>
+        </div>
+
+        <div
+          id="code-preview"
+          style="
+            margin-top: 20px;
+            font-family: 'JetBrains Mono';
+            color: #64748b;
+            font-size: 0.85rem;
+            text-align: center;
+          "
+        >
+          Robot r = new Robot(...);
+        </div>
+      </div>
+
+      <!-- RIGHT: THE HEAP (MEMORY) -->
+      <div class="panel">
+        <div class="panel-header">
+          <i class="fa-solid fa-memory"></i> Heap Memory
+        </div>
+        <div class="heap-grid" id="heap">
+          <!-- Objects will appear here -->
+        </div>
+        <div
+          style="
+            margin-top: auto;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            padding-top: 10px;
+          "
+        >
+          Objects persist here until garbage collected.
+        </div>
+      </div>
+    </div>
+
+    <div class="explanation-box">
+      <div>
+        <h3 style="color: var(--accent); margin-top: 0">
+          1. Design Phase (Left)
+        </h3>
+        <p>
+          Select a template (Robot, Car, etc.) or create your own structure by
+          adding fields. Notice how the <strong>Blueprint Code</strong> updates
+          automatically. This represents writing the `.java` file.
+        </p>
+      </div>
+      <div>
+        <h3 style="color: var(--accent); margin-top: 0">
+          2. Runtime Phase (Middle/Right)
+        </h3>
+        <p>
+          When you click <code>new</code>, the JVM reads the current blueprint
+          and allocates memory on the Heap. Try adding a field like
+          <code>int ammo</code> to the Robot, and see how the created object
+          changes!
+        </p>
+      </div>
+    </div>
+
+    <!-- Animation Element -->
+    <div id="beam" class="construction-beam"></div>
+
+    <script>
+      // --- DATA & STATE ---
+      const icons = {
+        Robot: "fa-robot",
+        Car: "fa-car",
+        Cat: "fa-cat",
+        Planet: "fa-earth-americas",
+      };
+
+      // Initial State for different classes
+      const classTemplates = {
+        Robot: [
+          { name: "name", type: "String", value: "Bender" },
+          { name: "material", type: "String", value: "Metal" },
+        ],
+        Car: [
+          { name: "brand", type: "String", value: "Tesla" },
+          { name: "speed", type: "int", value: "120" },
+        ],
+        Cat: [
+          { name: "name", type: "String", value: "Luna" },
+          { name: "isHungry", type: "boolean", value: "true" },
+        ],
+        Planet: [
+          { name: "name", type: "String", value: "Mars" },
+          { name: "population", type: "int", value: "0" },
+        ],
+      };
+
+      let currentClassName = "Robot";
+      // Deep copy to allow modification without breaking defaults
+      let currentFields = JSON.parse(JSON.stringify(classTemplates["Robot"]));
+      let memoryCounter = 1000;
+
+      // --- RENDER FUNCTIONS ---
+
+      function renderBlueprint() {
+        const codeDisplay = document.getElementById("codeDisplay");
+
+        let fieldsHtml = currentFields
+          .map(
+            (f) =>
+              `&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${f.type}</span> <span class="hl-var">${f.name}</span>;`
+          )
+          .join("<br>");
+
+        let paramsHtml = currentFields
+          .map(
+            (f) =>
+              `<span class="hl-type">${f.type}</span> ${f.name.substring(0, 1)}`
+          )
+          .join(", ");
+
+        let constructorBodyHtml = currentFields
+          .map(
+            (f) =>
+              `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-key">this</span>.${
+                f.name
+              } = ${f.name.substring(0, 1)};`
+          )
+          .join("<br>");
+
+        let code = `
+<span class="hl-key">public class</span> <span class="hl-type">${currentClassName}</span> {<br>
+<span class="hl-comment">// Fields (State)</span><br>
+${fieldsHtml}<br>
+<br>
+<span class="hl-comment">// Constructor</span><br>
+&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${currentClassName}</span>(${paramsHtml}) {<br>
+${constructorBodyHtml}<br>
+&nbsp;&nbsp;}<br>
+}`;
+        codeDisplay.innerHTML = code;
+      }
+
+      function renderInputs() {
+        const container = document.getElementById("dynamicInputs");
+        container.innerHTML = "";
+
+        currentFields.forEach((field, index) => {
+          const group = document.createElement("div");
+          group.className = "input-group";
+
+          let inputHtml = "";
+          if (field.type === "boolean") {
+            inputHtml = `
+                        <select id="input-${index}" onchange="updatePreview()">
+                            <option value="true" ${
+                              field.value === "true" ? "selected" : ""
+                            }>true</option>
+                            <option value="false" ${
+                              field.value === "false" ? "selected" : ""
+                            }>false</option>
+                        </select>
+                    `;
+          } else {
+            const inputType = field.type === "int" ? "number" : "text";
+            inputHtml = `<input type="${inputType}" id="input-${index}" value="${field.value}" oninput="updatePreview()">`;
+          }
+
+          group.innerHTML = `
+                    <label>
+                        <span>${field.name}</span>
+                        <span class="type-badge">${field.type}</span>
+                    </label>
+                    ${inputHtml}
+                `;
+          container.appendChild(group);
+        });
+
+        document.getElementById(
+          "btnText"
+        ).innerText = `new ${currentClassName}();`;
+        updatePreview();
+      }
+
+      function updatePreview() {
+        // Read values from current inputs
+        const values = currentFields.map((f, i) => {
+          const el = document.getElementById(`input-${i}`);
+          if (!el) return "...";
+          if (f.type === "String") return `"${el.value}"`;
+          return el.value;
+        });
+
+        const prev = document.getElementById("code-preview");
+        prev.innerHTML = `${currentClassName} obj = <span class="hl-key">new</span> ${currentClassName}(<span class="hl-str">${values.join(
+          ", "
+        )}</span>);`;
+      }
+
+      // --- ACTIONS ---
+
+      function switchClass() {
+        const sel = document.getElementById("classSelector");
+        currentClassName = sel.value;
+        // Reset to template default when switching (optional, but cleaner)
+        currentFields = JSON.parse(
+          JSON.stringify(classTemplates[currentClassName])
+        );
+
+        renderBlueprint();
+        renderInputs();
+      }
+
+      function addField() {
+        const nameInput = document.getElementById("newFieldName");
+        const typeInput = document.getElementById("newFieldType");
+
+        const name = nameInput.value.trim();
+        const type = typeInput.value;
+
+        if (!name) return;
+        // Simple duplicate check
+        if (currentFields.some((f) => f.name === name)) {
+          alert("Field name already exists!");
+          return;
+        }
+
+        // Default values for new fields
+        let defVal = "val";
+        if (type === "int") defVal = "0";
+        if (type === "boolean") defVal = "true";
+
+        currentFields.push({ name, type, value: defVal });
+
+        nameInput.value = ""; // clear
+        renderBlueprint();
+        renderInputs();
+      }
+
+      function createObject() {
+        // Gather Data
+        const instanceData = currentFields.map((f, i) => {
+          const el = document.getElementById(`input-${i}`);
+          return { name: f.name, value: el.value, type: f.type };
+        });
+
+        // Animation Setup
+        const btn = document.querySelector(".btn-construct");
+        const blueprint = document.getElementById("blueprint-panel");
+        const heap = document.getElementById("heap");
+        const beam = document.getElementById("beam");
+
+        const startRect = blueprint.getBoundingClientRect();
+        const endRect = heap.getBoundingClientRect();
+
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        const endX = endRect.left + 150;
+        const endY = endRect.top + 50; // Aim for top of heap
+
+        // Play Animation
+        beam.style.display = "block";
+        beam.style.left = startX + "px";
+        beam.style.top = startY + "px";
+
+        const anim = beam.animate(
+          [
+            { left: startX + "px", top: startY + "px", transform: "scale(1)" },
+            { left: endX + "px", top: endY + "px", transform: "scale(0.5)" },
+          ],
+          {
+            duration: 600,
+            easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+          }
+        );
+
+        anim.onfinish = () => {
+          beam.style.display = "none";
+          addObjectToHeap(instanceData);
+        };
+      }
+
+      function addObjectToHeap(data) {
+        const heap = document.getElementById("heap");
+        const card = document.createElement("div");
+        card.className = "object-card";
+
+        const address = "0x" + memoryCounter.toString(16).toUpperCase();
+        memoryCounter += 8;
+
+        const iconClass = icons[currentClassName] || "fa-cube";
+
+        // Generate field list HTML
+        const fieldsHtml = data
+          .map((d) => {
+            let valDisplay = d.value;
+            if (d.type === "String") valDisplay = `"${d.value}"`;
+            return `
+                    <div class="field-row">
+                        <span class="field-name">${d.name}:</span>
+                        <span class="field-val">${valDisplay}</span>
+                    </div>
+                `;
+          })
+          .join("");
+
+        card.innerHTML = `
+                <div class="card-icon">
+                    <i class="fa-solid ${iconClass}"></i>
+                    <div style="font-size:0.6rem; margin-top:5px; color:#64748b;">${currentClassName}</div>
+                </div>
+                <div class="card-details">
+                    <span class="mem-address">${address}</span>
+                    ${fieldsHtml}
+                </div>
+            `;
+
+        heap.prepend(card); // Add to top
+      }
+
+      // Init
+      renderBlueprint();
+      renderInputs();
+    </script>
+  </body>
+</html>
