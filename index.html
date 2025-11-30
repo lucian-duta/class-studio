@@ -644,18 +644,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Main Method Example -->
-        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #334155;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-            <label style="color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
-              <i class="fa-solid fa-play"></i> Main.java (Usage Example)
-            </label>
-          </div>
-          <div id="mainMethodDisplay" class="blueprint-content" style="max-height: 250px; font-size: 0.8rem;">
-            <!-- Main method code injected by JS -->
-          </div>
-        </div>
       </div>
 
       <!-- MIDDLE: CONTROLS (JVM) -->
@@ -781,6 +769,25 @@
         <p style="font-size: 0.85rem; margin-top: 10px;">
           <strong>Key Concepts:</strong> Each object is independent. Static fields are shared across all instances. Delete objects to simulate garbage collection!
         </p>
+      </div>
+    </div>
+
+    <!-- Main.java Usage Example -->
+    <div class="explanation-box" style="max-width: 100%;">
+      <div style="flex: 1;">
+        <h3 style="color: var(--accent); margin-top: 0; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-play"></i> 3. Using Your Class (Main.java)
+        </h3>
+        <p>
+          In Java, you typically use your classes from a separate <code>Main.java</code> file with a <code>main</code> method.
+          This is the entry point of your program where you create objects and call their methods.
+        </p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+          <strong>Note:</strong> The code below shows how to instantiate objects, access static fields, and call methods from your class blueprint.
+        </p>
+      </div>
+      <div id="mainMethodDisplay" class="blueprint-content" style="max-height: 400px; font-size: 0.85rem; flex: 1.5;">
+        <!-- Main method code injected by JS -->
       </div>
     </div>
 
