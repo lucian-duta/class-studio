@@ -644,6 +644,18 @@
             </button>
           </div>
         </div>
+
+        <!-- Main Method Example -->
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #334155;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <label style="color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;">
+              <i class="fa-solid fa-play"></i> Main.java (Usage Example)
+            </label>
+          </div>
+          <div id="mainMethodDisplay" class="blueprint-content" style="max-height: 250px; font-size: 0.8rem;">
+            <!-- Main method code injected by JS -->
+          </div>
+        </div>
       </div>
 
       <!-- MIDDLE: CONTROLS (JVM) -->
@@ -923,6 +935,49 @@
         code += `}`;
         codeDisplay.innerHTML = code;
         renderFieldList();
+        renderMainMethod();
+      }
+
+      function renderMainMethod() {
+        const mainDisplay = document.getElementById("mainMethodDisplay");
+        const instanceFields = currentFields.filter(f => !f.isStatic);
+        const staticFields = currentFields.filter(f => f.isStatic);
+
+        // Generate constructor arguments
+        const constructorArgs = instanceFields.map(f => {
+          if (f.type === "String") return `"${f.value}"`;
+          return f.value;
+        }).join(", ");
+
+        let mainCode = `<span class="hl-key">public class</span> <span class="hl-type">Main</span> {<br>`;
+        mainCode += `&nbsp;&nbsp;<span class="hl-key">public static void</span> main(<span class="hl-type">String</span>[] args) {<br>`;
+        mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-comment">// Create a ${currentClassName} object</span><br>`;
+        mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-type">${currentClassName}</span> obj = <span class="hl-key">new</span> <span class="hl-type">${currentClassName}</span>(${constructorArgs});<br><br>`;
+
+        if (staticFields.length > 0) {
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-comment">// Access static field</span><br>`;
+          const firstStatic = staticFields[0];
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hl-type">${currentClassName}</span>.${firstStatic.name});<br><br>`;
+        }
+
+        if (instanceFields.length > 0) {
+          const firstField = instanceFields[0];
+          const capitalizedName = firstField.name.charAt(0).toUpperCase() + firstField.name.slice(1);
+
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-comment">// Use getter method</span><br>`;
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-type">${firstField.type}</span> value = obj.get${capitalizedName}();<br>`;
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hl-str">"${firstField.name}: "</span> + value);<br><br>`;
+
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-comment">// Use setter method</span><br>`;
+          const newValue = firstField.type === "String" ? '"NewValue"' : (firstField.type === "boolean" ? "false" : "100");
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;obj.set${capitalizedName}(${newValue});<br><br>`;
+
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-comment">// Call display method</span><br>`;
+          mainCode += `&nbsp;&nbsp;&nbsp;&nbsp;obj.display();<br>`;
+        }
+
+        mainCode += `&nbsp;&nbsp;}<br>}`;
+        mainDisplay.innerHTML = mainCode;
       }
 
       function renderFieldList() {
