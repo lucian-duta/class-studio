@@ -106,7 +106,7 @@
         border: 1px dashed var(--accent);
         flex-grow: 1;
         overflow-y: auto;
-        max-height: 400px;
+        max-height: 500px;
       }
 
       .hl-key {
@@ -636,10 +636,10 @@
             </button>
           </div>
           <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button class="mini-btn secondary" onclick="addStaticField()" title="Add Static Field" style="flex: 1; font-size: 0.8rem;">
-              <i class="fa-solid fa-layer-group"></i> Static Field
+            <button class="mini-btn secondary" onclick="addStaticField()" title="Add Static Field" style="flex: 1; font-size: 0.75rem; padding: 10px 8px;">
+              <i class="fa-solid fa-layer-group"></i> Static
             </button>
-            <button class="mini-btn danger" onclick="resetClass()" title="Reset to Template" style="flex: 1; font-size: 0.8rem;">
+            <button class="mini-btn danger" onclick="resetClass()" title="Reset to Template" style="flex: 1; font-size: 0.75rem; padding: 10px 8px;">
               <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
           </div>
@@ -685,13 +685,16 @@
             <i class="fa-solid fa-bolt"></i> Method Demonstration
           </div>
           <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 10px;">
-            Methods operate on object data:
+            Call methods on the most recent object:
           </div>
           <button class="method-btn" onclick="demoMethod('display')">
-            obj.display() - Show Info
+            obj.display()
           </button>
-          <button class="method-btn" onclick="demoMethod('modify')">
-            obj.modify() - Update Field
+          <button class="method-btn" onclick="demoMethod('getter')">
+            obj.getField()
+          </button>
+          <button class="method-btn" onclick="demoMethod('setter')">
+            obj.setField(value)
           </button>
           <div class="method-output" id="methodOutput">
             // Output appears here...
@@ -885,7 +888,39 @@
           code += `${constructorBodyHtml}<br>`;
         }
 
-        code += `&nbsp;&nbsp;}<br>}`;
+        code += `&nbsp;&nbsp;}<br>`;
+
+        // Add getter and setter methods for instance fields
+        if (instanceFields.length > 0) {
+          code += `<br><span class="hl-comment">// Getters & Setters</span><br>`;
+
+          instanceFields.forEach(f => {
+            const capitalizedName = f.name.charAt(0).toUpperCase() + f.name.slice(1);
+
+            // Getter
+            code += `&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${f.type}</span> get${capitalizedName}() {<br>`;
+            code += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-key">return</span> <span class="hl-key">this</span>.${f.name};<br>`;
+            code += `&nbsp;&nbsp;}<br>`;
+
+            // Setter
+            code += `&nbsp;&nbsp;<span class="hl-key">public void</span> set${capitalizedName}(<span class="hl-type">${f.type}</span> ${f.name}) {<br>`;
+            code += `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-key">this</span>.${f.name} = ${f.name};<br>`;
+            code += `&nbsp;&nbsp;}<br>`;
+          });
+
+          // Add a display method
+          code += `<br><span class="hl-comment">// Display Method</span><br>`;
+          code += `&nbsp;&nbsp;<span class="hl-key">public void</span> display() {<br>`;
+          code += `&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hl-str">"=== ${currentClassName} Info ==="</span>);<br>`;
+
+          instanceFields.forEach(f => {
+            code += `&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="hl-str">"${f.name}: "</span> + <span class="hl-key">this</span>.${f.name});<br>`;
+          });
+
+          code += `&nbsp;&nbsp;}<br>`;
+        }
+
+        code += `}`;
         codeDisplay.innerHTML = code;
         renderFieldList();
       }
@@ -1292,35 +1327,60 @@
         // Get the first (most recent) object
         const firstCard = cards[0];
         const className = firstCard.getAttribute('data-class');
-        const fields = firstCard.querySelectorAll('.field-row');
+
+        // Get only instance fields (not static)
+        const cardDetails = firstCard.querySelector('.card-details');
+        const instanceFieldRows = Array.from(cardDetails.querySelectorAll('.field-row')).filter(row => {
+          return !row.closest('[style*="border-top"]');
+        });
 
         if (methodType === 'display') {
-          // Simulate a display() method
-          let info = `// Calling ${className}.display():\n`;
-          info += `System.out.println("Object Info:");\n`;
-          fields.forEach(field => {
-            const name = field.querySelector('.field-name').textContent.replace(':', '');
-            const value = field.querySelector('.field-val').textContent;
-            info += `System.out.println("${name} = " + ${value});\n`;
+          // Simulate the display() method from the blueprint
+          let info = `// Calling: obj.display();\n\n`;
+          info += `=== ${className} Info ===\n`;
+
+          instanceFieldRows.forEach(row => {
+            const fieldName = row.querySelector('.field-name').textContent.replace(':', '');
+            const value = row.querySelector('.field-val').textContent;
+            info += `${fieldName}: ${value}\n`;
           });
+
           output.innerHTML = info;
 
           // Highlight the object
           firstCard.classList.add('highlight');
           setTimeout(() => firstCard.classList.remove('highlight'), 2000);
 
-        } else if (methodType === 'modify') {
-          // Simulate modifying a field
-          const firstField = fields[0];
+        } else if (methodType === 'getter') {
+          // Simulate a getter method
+          const firstField = instanceFieldRows[0];
+          if (firstField) {
+            const fieldName = firstField.querySelector('.field-name').textContent.replace(':', '');
+            const value = firstField.querySelector('.field-val').textContent;
+            const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+            let info = `// Calling: obj.get${capitalizedName}();\n\n`;
+            info += `// Returns: ${value}`;
+            output.innerHTML = info;
+
+            // Highlight the object
+            firstCard.classList.add('highlight');
+            setTimeout(() => firstCard.classList.remove('highlight'), 2000);
+          }
+
+        } else if (methodType === 'setter') {
+          // Simulate a setter method
+          const firstField = instanceFieldRows[0];
           if (firstField) {
             const fieldName = firstField.querySelector('.field-name').textContent.replace(':', '');
             const fieldValEl = firstField.querySelector('.field-val');
             const oldValue = fieldValEl.textContent;
+            const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
 
             // Generate new value based on type
             let newValue;
             if (oldValue.includes('"')) {
-              newValue = `"Modified_${Date.now() % 1000}"`;
+              newValue = `"Updated_${Date.now() % 1000}"`;
             } else if (oldValue === 'true' || oldValue === 'false') {
               newValue = oldValue === 'true' ? 'false' : 'true';
             } else {
@@ -1335,9 +1395,10 @@
 
             fieldValEl.textContent = newValue;
 
-            output.innerHTML = `// Calling ${className}.modify():\n`;
-            output.innerHTML += `this.${fieldName} = ${newValue};\n`;
-            output.innerHTML += `// Field "${fieldName}" updated from ${oldValue} to ${newValue}`;
+            let info = `// Calling: obj.set${capitalizedName}(${newValue});\n\n`;
+            info += `// Field "${fieldName}" updated:\n`;
+            info += `// ${oldValue} → ${newValue}`;
+            output.innerHTML = info;
 
             // Highlight the object with animation
             firstCard.classList.add('highlight');
