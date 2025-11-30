@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Java Class Factory Animation</title>
+    <title>Java Class Studio - Interactive OOP Learning Tool</title>
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap"
       rel="stylesheet"
@@ -154,15 +154,21 @@
       .mini-btn:hover {
         filter: brightness(1.1);
       }
+      .mini-btn.danger {
+        background: var(--danger);
+      }
+      .mini-btn.secondary {
+        background: #475569;
+      }
 
       /* MIDDLE PANEL (JVM) */
       .controls {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        height: 600px;
-        padding: 0 20px;
+        min-height: 600px;
+        padding: 20px;
       }
 
       .constructor-area {
@@ -342,6 +348,228 @@
         gap: 20px;
       }
 
+      /* Field management */
+      .field-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 6px;
+        margin-bottom: 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85rem;
+      }
+
+      .field-item-locked {
+        opacity: 0.7;
+      }
+
+      .delete-btn {
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        transition: filter 0.2s;
+      }
+
+      .delete-btn:hover {
+        filter: brightness(1.2);
+      }
+
+      .delete-object-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+        opacity: 0.7;
+      }
+
+      .delete-object-btn:hover {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+
+      /* Statistics panel */
+      .stats-panel {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        font-size: 0.8rem;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--accent);
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      .stat-label {
+        color: #94a3b8;
+        font-size: 0.7rem;
+      }
+
+      /* Method execution visualization */
+      .method-panel {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+
+      .method-btn {
+        background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85rem;
+        margin-top: 8px;
+        width: 100%;
+        transition: transform 0.1s;
+      }
+
+      .method-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .method-output {
+        margin-top: 10px;
+        padding: 10px;
+        background: #0f172a;
+        border-radius: 6px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--string);
+        min-height: 30px;
+        white-space: pre-wrap;
+        line-height: 1.4;
+      }
+
+      /* Highlighting for object comparison */
+      .object-card.highlight {
+        border: 2px solid var(--accent);
+        box-shadow: 0 0 20px var(--accent-glow);
+      }
+
+      /* Clear heap button */
+      .clear-heap-btn {
+        width: 100%;
+        padding: 10px;
+        background: var(--danger);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        transition: filter 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+
+      .clear-heap-btn:hover {
+        filter: brightness(1.1);
+      }
+
+      /* Inheritance indicator */
+      .extends-badge {
+        display: inline-block;
+        background: rgba(168, 85, 247, 0.2);
+        color: var(--keyword);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 10px;
+        border: 1px solid var(--keyword);
+      }
+
+      /* Static field indicator */
+      .static-badge {
+        background: rgba(250, 204, 21, 0.2);
+        color: var(--type);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.65rem;
+        margin-left: 5px;
+      }
+
+      /* Reference type indicator */
+      .reference-indicator {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.7rem;
+        color: #64748b;
+        font-style: italic;
+      }
+
+      /* Scrollbar styling */
+      .heap-grid::-webkit-scrollbar,
+      .blueprint-content::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .heap-grid::-webkit-scrollbar-track,
+      .blueprint-content::-webkit-scrollbar-track {
+        background: #0f172a;
+        border-radius: 4px;
+      }
+
+      .heap-grid::-webkit-scrollbar-thumb,
+      .blueprint-content::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+
+      .heap-grid::-webkit-scrollbar-thumb:hover,
+      .blueprint-content::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 1200px) {
+        .factory-container {
+          grid-template-columns: 1fr;
+          max-width: 600px;
+        }
+
+        .explanation-box {
+          grid-template-columns: 1fr;
+        }
+
+        .controls {
+          min-height: auto;
+        }
+      }
+
       /* Dropdown styling for Class Selector */
       .class-select {
         background: #0f172a;
@@ -375,6 +603,8 @@
             <option value="Car">Car</option>
             <option value="Cat">Cat</option>
             <option value="Planet">Planet</option>
+            <option value="Dog">Dog (extends Animal)</option>
+            <option value="Student">Student</option>
           </select>
         </div>
 
@@ -386,6 +616,9 @@
           <label style="color: var(--accent)">
             <i class="fa-solid fa-pen-ruler"></i> Design: Add New Field</label
           >
+          <div id="fieldList" style="margin-bottom: 10px;">
+            <!-- Dynamic field list with delete buttons -->
+          </div>
           <div class="add-field-row">
             <input
               type="text"
@@ -396,9 +629,18 @@
               <option value="String">String</option>
               <option value="int">int</option>
               <option value="boolean">boolean</option>
+              <option value="double">double</option>
             </select>
             <button class="mini-btn" onclick="addField()" title="Add Field">
               <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button class="mini-btn secondary" onclick="addStaticField()" title="Add Static Field" style="flex: 1; font-size: 0.8rem;">
+              <i class="fa-solid fa-layer-group"></i> Static Field
+            </button>
+            <button class="mini-btn danger" onclick="resetClass()" title="Reset to Template" style="flex: 1; font-size: 0.8rem;">
+              <i class="fa-solid fa-rotate-left"></i> Reset
             </button>
           </div>
         </div>
@@ -436,6 +678,25 @@
         >
           Robot r = new Robot(...);
         </div>
+
+        <!-- Method Demonstration Panel -->
+        <div class="method-panel" id="methodPanel" style="display: none;">
+          <div style="color: var(--accent); font-size: 0.9rem; margin-bottom: 10px; font-family: 'JetBrains Mono';">
+            <i class="fa-solid fa-bolt"></i> Method Demonstration
+          </div>
+          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 10px;">
+            Methods operate on object data:
+          </div>
+          <button class="method-btn" onclick="demoMethod('display')">
+            obj.display() - Show Info
+          </button>
+          <button class="method-btn" onclick="demoMethod('modify')">
+            obj.modify() - Update Field
+          </button>
+          <div class="method-output" id="methodOutput">
+            // Output appears here...
+          </div>
+        </div>
       </div>
 
       <!-- RIGHT: THE HEAP (MEMORY) -->
@@ -443,12 +704,30 @@
         <div class="panel-header">
           <i class="fa-solid fa-memory"></i> Heap Memory
         </div>
+
+        <!-- Statistics Panel -->
+        <div class="stats-panel">
+          <div class="stat-item">
+            <span class="stat-value" id="objectCount">0</span>
+            <span class="stat-label">Objects in Memory</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="totalCreated">0</span>
+            <span class="stat-label">Total Created</span>
+          </div>
+        </div>
+
         <div class="heap-grid" id="heap">
           <!-- Objects will appear here -->
         </div>
+
+        <button class="clear-heap-btn" onclick="garbageCollectAll()" id="clearHeapBtn" style="display: none;">
+          <i class="fa-solid fa-trash"></i> Garbage Collect All
+        </button>
+
         <div
           style="
-            margin-top: auto;
+            margin-top: 10px;
             text-align: center;
             color: #64748b;
             font-size: 0.8rem;
@@ -470,6 +749,9 @@
           adding fields. Notice how the <strong>Blueprint Code</strong> updates
           automatically. This represents writing the `.java` file.
         </p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+          <strong>Try:</strong> Add static fields, remove fields, or try the Dog class to see inheritance!
+        </p>
       </div>
       <div>
         <h3 style="color: var(--accent); margin-top: 0">
@@ -480,6 +762,9 @@
           and allocates memory on the Heap. Try adding a field like
           <code>int ammo</code> to the Robot, and see how the created object
           changes!
+        </p>
+        <p style="font-size: 0.85rem; margin-top: 10px;">
+          <strong>Key Concepts:</strong> Each object is independent. Static fields are shared across all instances. Delete objects to simulate garbage collection!
         </p>
       </div>
     </div>
@@ -494,53 +779,82 @@
         Car: "fa-car",
         Cat: "fa-cat",
         Planet: "fa-earth-americas",
+        Dog: "fa-dog",
+        Student: "fa-user-graduate",
       };
 
       // Initial State for different classes
       const classTemplates = {
         Robot: [
-          { name: "name", type: "String", value: "Bender" },
-          { name: "material", type: "String", value: "Metal" },
+          { name: "name", type: "String", value: "Bender", isStatic: false },
+          { name: "material", type: "String", value: "Metal", isStatic: false },
         ],
         Car: [
-          { name: "brand", type: "String", value: "Tesla" },
-          { name: "speed", type: "int", value: "120" },
+          { name: "brand", type: "String", value: "Tesla", isStatic: false },
+          { name: "speed", type: "int", value: "120", isStatic: false },
         ],
         Cat: [
-          { name: "name", type: "String", value: "Luna" },
-          { name: "isHungry", type: "boolean", value: "true" },
+          { name: "name", type: "String", value: "Luna", isStatic: false },
+          { name: "isHungry", type: "boolean", value: "true", isStatic: false },
         ],
         Planet: [
-          { name: "name", type: "String", value: "Mars" },
-          { name: "population", type: "int", value: "0" },
+          { name: "name", type: "String", value: "Mars", isStatic: false },
+          { name: "population", type: "int", value: "0", isStatic: false },
         ],
+        Dog: [
+          { name: "species", type: "String", value: "Canine", isStatic: true },
+          { name: "name", type: "String", value: "Buddy", isStatic: false },
+          { name: "breed", type: "String", value: "Golden Retriever", isStatic: false },
+        ],
+        Student: [
+          { name: "name", type: "String", value: "Alice", isStatic: false },
+          { name: "studentId", type: "int", value: "12345", isStatic: false },
+          { name: "gpa", type: "double", value: "3.8", isStatic: false },
+        ],
+      };
+
+      const classParents = {
+        Dog: "Animal",
       };
 
       let currentClassName = "Robot";
       // Deep copy to allow modification without breaking defaults
       let currentFields = JSON.parse(JSON.stringify(classTemplates["Robot"]));
       let memoryCounter = 1000;
+      let totalObjectsCreated = 0;
+      let objectsInMemory = 0;
+      let staticFieldValues = {}; // Shared across all instances
 
       // --- RENDER FUNCTIONS ---
 
       function renderBlueprint() {
         const codeDisplay = document.getElementById("codeDisplay");
 
-        let fieldsHtml = currentFields
+        let staticFields = currentFields.filter(f => f.isStatic);
+        let instanceFields = currentFields.filter(f => !f.isStatic);
+
+        let staticFieldsHtml = staticFields
+          .map(
+            (f) =>
+              `&nbsp;&nbsp;<span class="hl-key">public static</span> <span class="hl-type">${f.type}</span> <span class="hl-var">${f.name}</span> = <span class="hl-str">${f.type === 'String' ? '"' + f.value + '"' : f.value}</span>;`
+          )
+          .join("<br>");
+
+        let fieldsHtml = instanceFields
           .map(
             (f) =>
               `&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${f.type}</span> <span class="hl-var">${f.name}</span>;`
           )
           .join("<br>");
 
-        let paramsHtml = currentFields
+        let paramsHtml = instanceFields
           .map(
             (f) =>
               `<span class="hl-type">${f.type}</span> ${f.name.substring(0, 1)}`
           )
           .join(", ");
 
-        let constructorBodyHtml = currentFields
+        let constructorBodyHtml = instanceFields
           .map(
             (f) =>
               `&nbsp;&nbsp;&nbsp;&nbsp;<span class="hl-key">this</span>.${
@@ -549,31 +863,75 @@
           )
           .join("<br>");
 
+        const extendsClause = classParents[currentClassName]
+          ? ` <span class="hl-key">extends</span> <span class="hl-type">${classParents[currentClassName]}</span>`
+          : '';
+
         let code = `
-<span class="hl-key">public class</span> <span class="hl-type">${currentClassName}</span> {<br>
-<span class="hl-comment">// Fields (State)</span><br>
-${fieldsHtml}<br>
-<br>
-<span class="hl-comment">// Constructor</span><br>
-&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${currentClassName}</span>(${paramsHtml}) {<br>
-${constructorBodyHtml}<br>
-&nbsp;&nbsp;}<br>
-}`;
+<span class="hl-key">public class</span> <span class="hl-type">${currentClassName}</span>${extendsClause} {<br>`;
+
+        if (staticFields.length > 0) {
+          code += `<span class="hl-comment">// Static Fields (Shared)</span><br>${staticFieldsHtml}<br><br>`;
+        }
+
+        if (instanceFields.length > 0) {
+          code += `<span class="hl-comment">// Instance Fields</span><br>${fieldsHtml}<br><br>`;
+        }
+
+        code += `<span class="hl-comment">// Constructor</span><br>
+&nbsp;&nbsp;<span class="hl-key">public</span> <span class="hl-type">${currentClassName}</span>(${paramsHtml}) {<br>`;
+
+        if (constructorBodyHtml) {
+          code += `${constructorBodyHtml}<br>`;
+        }
+
+        code += `&nbsp;&nbsp;}<br>}`;
         codeDisplay.innerHTML = code;
+        renderFieldList();
+      }
+
+      function renderFieldList() {
+        const fieldList = document.getElementById("fieldList");
+
+        if (currentFields.length === 0) {
+          fieldList.innerHTML = '<div style="color: #64748b; font-size: 0.8rem; padding: 8px; text-align: center;">No fields defined</div>';
+          return;
+        }
+
+        fieldList.innerHTML = currentFields
+          .map((f, idx) => {
+            const isTemplate = classTemplates[currentClassName] &&
+                             classTemplates[currentClassName].some(tf => tf.name === f.name);
+            return `
+              <div class="field-item ${isTemplate ? 'field-item-locked' : ''}">
+                <span>
+                  <span class="hl-type">${f.type}</span>
+                  <span class="hl-var">${f.name}</span>
+                  ${f.isStatic ? '<span class="static-badge">static</span>' : ''}
+                </span>
+                ${!isTemplate ? `<button class="delete-btn" onclick="removeField(${idx})"><i class="fa-solid fa-xmark"></i></button>` : '<span style="color: #64748b; font-size: 0.7rem;">template</span>'}
+              </div>
+            `;
+          })
+          .join("");
       }
 
       function renderInputs() {
         const container = document.getElementById("dynamicInputs");
         container.innerHTML = "";
 
-        currentFields.forEach((field, index) => {
+        // Only show non-static fields in constructor
+        const instanceFields = currentFields.filter(f => !f.isStatic);
+
+        instanceFields.forEach((field, index) => {
+          const actualIndex = currentFields.indexOf(field);
           const group = document.createElement("div");
           group.className = "input-group";
 
           let inputHtml = "";
           if (field.type === "boolean") {
             inputHtml = `
-                        <select id="input-${index}" onchange="updatePreview()">
+                        <select id="input-${actualIndex}" onchange="updatePreview()">
                             <option value="true" ${
                               field.value === "true" ? "selected" : ""
                             }>true</option>
@@ -583,8 +941,9 @@ ${constructorBodyHtml}<br>
                         </select>
                     `;
           } else {
-            const inputType = field.type === "int" ? "number" : "text";
-            inputHtml = `<input type="${inputType}" id="input-${index}" value="${field.value}" oninput="updatePreview()">`;
+            const inputType = (field.type === "int" || field.type === "double") ? "number" : "text";
+            const step = field.type === "double" ? "0.1" : "1";
+            inputHtml = `<input type="${inputType}" step="${step}" id="input-${actualIndex}" value="${field.value}" oninput="updatePreview()">`;
           }
 
           group.innerHTML = `
@@ -604,9 +963,11 @@ ${constructorBodyHtml}<br>
       }
 
       function updatePreview() {
-        // Read values from current inputs
-        const values = currentFields.map((f, i) => {
-          const el = document.getElementById(`input-${i}`);
+        // Read values from current inputs (only instance fields)
+        const instanceFields = currentFields.filter(f => !f.isStatic);
+        const values = instanceFields.map((f, i) => {
+          const actualIndex = currentFields.indexOf(f);
+          const el = document.getElementById(`input-${actualIndex}`);
           if (!el) return "...";
           if (f.type === "String") return `"${el.value}"`;
           return el.value;
@@ -616,6 +977,14 @@ ${constructorBodyHtml}<br>
         prev.innerHTML = `${currentClassName} obj = <span class="hl-key">new</span> ${currentClassName}(<span class="hl-str">${values.join(
           ", "
         )}</span>);`;
+      }
+
+      function updateStats() {
+        document.getElementById("objectCount").textContent = objectsInMemory;
+        document.getElementById("totalCreated").textContent = totalObjectsCreated;
+
+        const clearBtn = document.getElementById("clearHeapBtn");
+        clearBtn.style.display = objectsInMemory > 0 ? "block" : "none";
       }
 
       // --- ACTIONS ---
@@ -632,6 +1001,18 @@ ${constructorBodyHtml}<br>
         renderInputs();
       }
 
+      function validateFieldName(name) {
+        // Java naming conventions
+        if (!name || name.length === 0) return "Field name cannot be empty";
+        if (!/^[a-zA-Z_$]/.test(name)) return "Field name must start with a letter, underscore, or dollar sign";
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return "Field name can only contain letters, digits, underscores, and dollar signs";
+        if (/^[A-Z]/.test(name)) return "Field names should start with a lowercase letter (convention)";
+        const javaKeywords = ["class", "public", "private", "static", "void", "int", "boolean", "if", "else", "for", "while", "return", "new", "this"];
+        if (javaKeywords.includes(name)) return "Cannot use Java keyword as field name";
+        if (currentFields.some((f) => f.name === name)) return "Field name already exists";
+        return null;
+      }
+
       function addField() {
         const nameInput = document.getElementById("newFieldName");
         const typeInput = document.getElementById("newFieldType");
@@ -639,10 +1020,9 @@ ${constructorBodyHtml}<br>
         const name = nameInput.value.trim();
         const type = typeInput.value;
 
-        if (!name) return;
-        // Simple duplicate check
-        if (currentFields.some((f) => f.name === name)) {
-          alert("Field name already exists!");
+        const validationError = validateFieldName(name);
+        if (validationError) {
+          alert(validationError);
           return;
         }
 
@@ -650,19 +1030,83 @@ ${constructorBodyHtml}<br>
         let defVal = "val";
         if (type === "int") defVal = "0";
         if (type === "boolean") defVal = "true";
+        if (type === "double") defVal = "0.0";
 
-        currentFields.push({ name, type, value: defVal });
+        currentFields.push({ name, type, value: defVal, isStatic: false });
 
         nameInput.value = ""; // clear
         renderBlueprint();
         renderInputs();
       }
 
+      function addStaticField() {
+        const nameInput = document.getElementById("newFieldName");
+        const typeInput = document.getElementById("newFieldType");
+
+        const name = nameInput.value.trim();
+        const type = typeInput.value;
+
+        const validationError = validateFieldName(name);
+        if (validationError) {
+          alert(validationError);
+          return;
+        }
+
+        // Default values for new fields
+        let defVal = "val";
+        if (type === "int") defVal = "0";
+        if (type === "boolean") defVal = "true";
+        if (type === "double") defVal = "0.0";
+
+        currentFields.push({ name, type, value: defVal, isStatic: true });
+        staticFieldValues[currentClassName + "." + name] = defVal;
+
+        nameInput.value = ""; // clear
+        renderBlueprint();
+        renderInputs();
+      }
+
+      function removeField(index) {
+        const field = currentFields[index];
+        if (field.isStatic) {
+          delete staticFieldValues[currentClassName + "." + field.name];
+        }
+        currentFields.splice(index, 1);
+        renderBlueprint();
+        renderInputs();
+      }
+
+      function resetClass() {
+        if (confirm("Reset class to template? This will remove all custom fields.")) {
+          currentFields = JSON.parse(
+            JSON.stringify(classTemplates[currentClassName])
+          );
+          renderBlueprint();
+          renderInputs();
+        }
+      }
+
       function createObject() {
-        // Gather Data
-        const instanceData = currentFields.map((f, i) => {
-          const el = document.getElementById(`input-${i}`);
-          return { name: f.name, value: el.value, type: f.type };
+        // Gather instance field data
+        const instanceData = [];
+        const staticData = [];
+
+        currentFields.forEach((f, i) => {
+          if (f.isStatic) {
+            const key = currentClassName + "." + f.name;
+            staticData.push({
+              name: f.name,
+              value: staticFieldValues[key] || f.value,
+              type: f.type,
+              isStatic: true
+            });
+          } else {
+            // Use the actual index i which matches the input element ID
+            const el = document.getElementById(`input-${i}`);
+            if (el) {
+              instanceData.push({ name: f.name, value: el.value, type: f.type, isStatic: false });
+            }
+          }
         });
 
         // Animation Setup
@@ -697,7 +1141,7 @@ ${constructorBodyHtml}<br>
 
         anim.onfinish = () => {
           beam.style.display = "none";
-          addObjectToHeap(instanceData);
+          addObjectToHeap([...instanceData, ...staticData]);
         };
       }
 
@@ -707,12 +1151,22 @@ ${constructorBodyHtml}<br>
         card.className = "object-card";
 
         const address = "0x" + memoryCounter.toString(16).toUpperCase();
+        const objectId = totalObjectsCreated;
         memoryCounter += 8;
+        totalObjectsCreated++;
+        objectsInMemory++;
+
+        card.setAttribute('data-object-id', objectId);
+        card.setAttribute('data-class', currentClassName);
 
         const iconClass = icons[currentClassName] || "fa-cube";
 
+        // Separate static and instance fields
+        const instanceFields = data.filter(d => !d.isStatic);
+        const staticFields = data.filter(d => d.isStatic);
+
         // Generate field list HTML
-        const fieldsHtml = data
+        const fieldsHtml = instanceFields
           .map((d) => {
             let valDisplay = d.value;
             if (d.type === "String") valDisplay = `"${d.value}"`;
@@ -725,23 +1179,178 @@ ${constructorBodyHtml}<br>
           })
           .join("");
 
+        const staticFieldsHtml = staticFields.length > 0 ? `
+          <div style="border-top: 1px dashed #475569; margin-top: 8px; padding-top: 8px;">
+            <div style="font-size: 0.65rem; color: #64748b; margin-bottom: 4px;">STATIC (shared):</div>
+            ${staticFields.map(d => {
+              let valDisplay = d.value;
+              if (d.type === "String") valDisplay = `"${d.value}"`;
+              return `
+                <div class="field-row">
+                  <span class="field-name">${d.name}:</span>
+                  <span class="field-val">${valDisplay}</span>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        ` : '';
+
+        const extendsInfo = classParents[currentClassName]
+          ? `<span class="extends-badge">extends ${classParents[currentClassName]}</span>`
+          : '';
+
+        const isPrimitive = instanceFields.every(f => f.type !== "String");
+        const refIndicator = !isPrimitive
+          ? '<div class="reference-indicator">reference type</div>'
+          : '';
+
         card.innerHTML = `
+                <button class="delete-object-btn" onclick="garbageCollect(${objectId})">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
                 <div class="card-icon">
                     <i class="fa-solid ${iconClass}"></i>
-                    <div style="font-size:0.6rem; margin-top:5px; color:#64748b;">${currentClassName}</div>
+                    <div style="font-size:0.6rem; margin-top:5px; color:#64748b;">${currentClassName} ${extendsInfo}</div>
                 </div>
                 <div class="card-details">
                     <span class="mem-address">${address}</span>
                     ${fieldsHtml}
+                    ${staticFieldsHtml}
                 </div>
+                ${refIndicator}
             `;
 
         heap.prepend(card); // Add to top
+        updateStats();
+        checkMethodPanel();
+
+        // Highlight briefly to show independence
+        setTimeout(() => {
+          card.classList.add('highlight');
+          setTimeout(() => card.classList.remove('highlight'), 1000);
+        }, 100);
+      }
+
+      function garbageCollect(objectId) {
+        const card = document.querySelector(`[data-object-id="${objectId}"]`);
+        if (card) {
+          card.style.animation = 'none';
+          card.style.transition = 'all 0.3s';
+          card.style.opacity = '0';
+          card.style.transform = 'scale(0.8)';
+
+          setTimeout(() => {
+            card.remove();
+            objectsInMemory--;
+            updateStats();
+            checkMethodPanel();
+          }, 300);
+        }
+      }
+
+      function garbageCollectAll() {
+        if (confirm(`Garbage collect all ${objectsInMemory} objects?`)) {
+          const heap = document.getElementById("heap");
+          const cards = heap.querySelectorAll('.object-card');
+
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.style.transition = 'all 0.3s';
+              card.style.opacity = '0';
+              card.style.transform = 'scale(0.5)';
+            }, index * 50);
+          });
+
+          setTimeout(() => {
+            heap.innerHTML = '';
+            objectsInMemory = 0;
+            updateStats();
+            checkMethodPanel();
+          }, cards.length * 50 + 300);
+        }
+      }
+
+      function checkMethodPanel() {
+        const methodPanel = document.getElementById('methodPanel');
+        if (objectsInMemory > 0) {
+          methodPanel.style.display = 'block';
+        } else {
+          methodPanel.style.display = 'none';
+        }
+      }
+
+      function demoMethod(methodType) {
+        const heap = document.getElementById('heap');
+        const cards = heap.querySelectorAll('.object-card');
+        const output = document.getElementById('methodOutput');
+
+        if (cards.length === 0) {
+          output.innerHTML = '// Error: No objects in memory!';
+          return;
+        }
+
+        // Get the first (most recent) object
+        const firstCard = cards[0];
+        const className = firstCard.getAttribute('data-class');
+        const fields = firstCard.querySelectorAll('.field-row');
+
+        if (methodType === 'display') {
+          // Simulate a display() method
+          let info = `// Calling ${className}.display():\n`;
+          info += `System.out.println("Object Info:");\n`;
+          fields.forEach(field => {
+            const name = field.querySelector('.field-name').textContent.replace(':', '');
+            const value = field.querySelector('.field-val').textContent;
+            info += `System.out.println("${name} = " + ${value});\n`;
+          });
+          output.innerHTML = info;
+
+          // Highlight the object
+          firstCard.classList.add('highlight');
+          setTimeout(() => firstCard.classList.remove('highlight'), 2000);
+
+        } else if (methodType === 'modify') {
+          // Simulate modifying a field
+          const firstField = fields[0];
+          if (firstField) {
+            const fieldName = firstField.querySelector('.field-name').textContent.replace(':', '');
+            const fieldValEl = firstField.querySelector('.field-val');
+            const oldValue = fieldValEl.textContent;
+
+            // Generate new value based on type
+            let newValue;
+            if (oldValue.includes('"')) {
+              newValue = `"Modified_${Date.now() % 1000}"`;
+            } else if (oldValue === 'true' || oldValue === 'false') {
+              newValue = oldValue === 'true' ? 'false' : 'true';
+            } else {
+              // Handle numeric values
+              const numValue = parseFloat(oldValue);
+              if (!isNaN(numValue)) {
+                newValue = oldValue.includes('.') ? (numValue + 0.1).toFixed(1) : (numValue + 1).toString();
+              } else {
+                newValue = '0';
+              }
+            }
+
+            fieldValEl.textContent = newValue;
+
+            output.innerHTML = `// Calling ${className}.modify():\n`;
+            output.innerHTML += `this.${fieldName} = ${newValue};\n`;
+            output.innerHTML += `// Field "${fieldName}" updated from ${oldValue} to ${newValue}`;
+
+            // Highlight the object with animation
+            firstCard.classList.add('highlight');
+            setTimeout(() => firstCard.classList.remove('highlight'), 2000);
+          }
+        }
       }
 
       // Init
       renderBlueprint();
       renderInputs();
+      updateStats();
+      checkMethodPanel();
     </script>
   </body>
 </html>
